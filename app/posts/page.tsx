@@ -1,9 +1,12 @@
 import React from 'react'
-import GetPostsList from './getPostsList'
+import GetPosts from './getPosts'
 
 function Posts() {
   return (
-    <div><GetPostsList /></div>
+    <div>
+      {/* @ts-ignore */}
+      <GetPosts />
+    </div>
   )
 }
 

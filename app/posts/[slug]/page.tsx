@@ -1,18 +1,5 @@
-import Image from 'next/image';
-import React from 'react';
-
-interface Post {
-  attributes:any;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  featured_image: {
-    data: any;
-    url: string;
-  };
-}
-
+import React from 'react'
+import { notFound } from "next/navigation";
 
 type PageProps = {
   params: {
@@ -21,59 +8,28 @@ type PageProps = {
 };
 
 const fetchPostSingle = async (slug: string) => {
-  const response = await fetch(process.env.GRAPHURL_ENDPOINT as string, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-          query {
-            posts(filters: { slug: { eq: "${slug}" } }) {
-              data {
-                attributes {
-                  title
-                  slug
-                  excerpt
-                  content
-                  featured_image {
-                    data {
-                      attributes {
-                        url
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-      }),
-    });
-    const json = await response.json();
-    return json.data.posts.data[0].attributes as Post;
-}
+  const res =  await fetch(`${process.env.API_ENDPOINT}/posts?filters[slug][$eq]=${slug}&populate=*`, {next: {revalidate: 20}})
+  if (!res.ok) {
+    console.error(`Error: ${res.status} ${res.statusText}`);
+    throw new Error(res.statusText);
+  }
+  return res.json();
+};
 
-function notFound() {
-  return <div>404 Not Found</div>;
-}
-
-async function SinglePostPage({ params: { slug } }: PageProps) {
+async function SlugPage({ params: { slug } }: PageProps) {
   const post = await fetchPostSingle(slug);
   if (!post) return notFound();
+  console.log(post)
   return (
-    <>
-      <h2 dangerouslySetInnerHTML={{ __html: post.title }} className="text-7xl text-center mb-20"></h2>
-      {post && (
-        <div>
-          <p dangerouslySetInnerHTML={{ __html: post.excerpt }}></p>
-          <Image src={`https://${process.env.IMAGE_DOMAIN + post.featured_image.data.attributes.url}`} width={500} height={500} alt={post.title} />
-          <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
-        </div>
-      )}
-    </>
-  );
+    <div>
+      {post?.data.map((post:any) => (
+            <div key={post.id} className='mb-10'>
+              {post.attributes.title}
+              <p dangerouslySetInnerHTML={{ __html: post.attributes.content }}></p>
+            </div>
+        ))}
+    </div>
+  )
 }
 
-export default SinglePostPage;
+export default SlugPage
