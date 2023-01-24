@@ -38,15 +38,15 @@ function LoadMorePosts() {
         <div>
             {postList.map((post: any) => (
                 <div key={post.id} className='my-10'>
-                    {post.attributes.title}
-                    <p dangerouslySetInnerHTML={{ __html: post.attributes.content }}></p>
-                    <Link href={`/posts/${post.attributes.slug}`}>Read More</Link>
+                    <h2 className="text-4xl mb-5" dangerouslySetInnerHTML={{ __html: post.attributes.title }}></h2>
+                    <p dangerouslySetInnerHTML={{ __html: post.attributes.excerpt }}></p>
+                    <Link className="font-bold text-lg" href={`/posts/${post.attributes.slug}`}>Read More</Link>
                 </div>
             ))}
             {isLoading ? (
                 <div>Loading...</div>
             ) : (
-                <button onClick={loadMore} disabled={isButtonDisabled}>Load More</button>
+                <button className='btn-LoadMore bg-indigo-700 text-white rounded-md p-2 disabled:bg-zinc-300 disabled:text-gray-500' onClick={loadMore} disabled={isButtonDisabled}>Load More</button>
             )}
         </div>
     )
