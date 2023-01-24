@@ -40,7 +40,7 @@ function LoadMorePosts() {
                 <div key={post.id} className='my-10'>
                     <h2 className="text-4xl mb-5" dangerouslySetInnerHTML={{ __html: post.attributes.title }}></h2>
                     <p dangerouslySetInnerHTML={{ __html: post.attributes.excerpt }}></p>
-                    <Link className="font-bold text-lg" href={`/posts/${post.attributes.slug}`}>Read More</Link>
+                    <Link className="font-bold text-lg" href={`/blogs/${post.attributes.slug}`}>Read More</Link>
                 </div>
             ))}
             {isLoading ? (
